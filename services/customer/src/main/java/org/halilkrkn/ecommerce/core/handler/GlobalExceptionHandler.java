@@ -9,31 +9,30 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity<String> handle(CustomerNotFoundException ex) {
+    public ResponseEntity<String> handle(CustomerNotFoundException exp) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMsg());
+                .body(exp.getMsg());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handle(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handle(MethodArgumentNotValidException exp) {
         var errors = new HashMap<String, String>();
-        ex.getBindingResult().getAllErrors()
-                .forEach(error ->{
-                        var fieldName = ((FieldError) error).getField();
-                        var errorMessage = error.getDefaultMessage();
-                        errors.put()
+        exp.getBindingResult().getAllErrors()
+                .forEach(error -> {
+                    var fieldName = ((FieldError) error).getField();
+                    var errorMessage = error.getDefaultMessage();
+                    errors.put(fieldName, errorMessage);
                 });
+
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMsg());
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(errors));
     }
 
 
