@@ -4,10 +4,10 @@ services:
     image: postgres
     environment:
       POSTGRES_USER: halilkrkn
-      POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: halilkrkn
+      PGDATA: /data/postgres
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres:/data/postgres
     ports:
       - 5432:5432
     networks:
