@@ -9,8 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "category")
 public class Category {
