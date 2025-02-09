@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.halilkrkn.ecommerce.core.exception.BusinessException;
 import org.halilkrkn.ecommerce.core.mapper.OrderMapper;
 import org.halilkrkn.ecommerce.core.open_feign.CustomerClient;
+import org.halilkrkn.ecommerce.core.open_feign.PaymentClient;
 import org.halilkrkn.ecommerce.core.rest_template.ProductClient;
 import org.halilkrkn.ecommerce.dto.request.order.OrderRequest;
 import org.halilkrkn.ecommerce.dto.request.order_line.OrderLineRequest;
+import org.halilkrkn.ecommerce.dto.request.payment.PaymentRequest;
 import org.halilkrkn.ecommerce.dto.request.product.PurchaseProductRequest;
 import org.halilkrkn.ecommerce.dto.response.order.OrderResponse;
 import org.halilkrkn.ecommerce.kafka.OrderConfirmation;
@@ -37,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper mapper;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
 
 
     @Override
@@ -62,7 +65,16 @@ public class OrderServiceImpl implements OrderService {
             );
         }
 
-        // start payment process --> payment-ms
+        // start payment process --> payment-ms (OpenFeign)
+        var paymentRequest = new PaymentRequest(
+                orderRequest.amount(),
+                orderRequest.paymentMethod(),
+                orderRequest.id(),
+                orderRequest.reference(),
+                customer
+                );
+
+        paymentClient.requestOrderPayment(paymentRequest);
 
         // send the order confirmation email --> notification-ms (kafka)
         orderProducer.sendOrderConfirmation(
