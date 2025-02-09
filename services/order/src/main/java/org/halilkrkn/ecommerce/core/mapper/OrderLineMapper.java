@@ -1,6 +1,7 @@
 package org.halilkrkn.ecommerce.core.mapper;
 
 import org.halilkrkn.ecommerce.dto.request.order_line.OrderLineRequest;
+import org.halilkrkn.ecommerce.dto.response.order_line.OrderLineResponse;
 import org.halilkrkn.ecommerce.entities.order.Order;
 import org.halilkrkn.ecommerce.entities.order_line.OrderLine;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,12 @@ public class OrderLineMapper {
                 .productId(request.productId())
                 .quantity(request.quantity())
                 .build();
+    }
+
+    public OrderLineResponse fromOrderLineResponse(OrderLine orderLine) {
+        return new OrderLineResponse(
+                orderLine.getId(),
+                orderLine.getQuantity()
+        );
     }
 }

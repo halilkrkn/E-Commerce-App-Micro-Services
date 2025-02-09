@@ -1,6 +1,7 @@
 package org.halilkrkn.ecommerce.core.mapper;
 
 import org.halilkrkn.ecommerce.dto.request.order.OrderRequest;
+import org.halilkrkn.ecommerce.dto.response.order.OrderResponse;
 import org.halilkrkn.ecommerce.entities.order.Order;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +15,15 @@ public class OrderMapper {
                     .totalAmount(orderRequest.amount())
                     .paymentMethod(orderRequest.paymentMethod())
                     .build();
+    }
+
+    public OrderResponse fromOrderResponse(Order order) {
+        return new OrderResponse(
+                order.getId(),
+                order.getReference(),
+                order.getTotalAmount(),
+                order.getPaymentMethod(),
+                order.getCustomerId()
+        );
     }
 }

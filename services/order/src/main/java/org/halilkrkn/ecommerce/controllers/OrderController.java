@@ -3,12 +3,12 @@ package org.halilkrkn.ecommerce.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.halilkrkn.ecommerce.dto.request.order.OrderRequest;
+import org.halilkrkn.ecommerce.dto.response.order.OrderResponse;
 import org.halilkrkn.ecommerce.services.order.OrderService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -22,5 +22,17 @@ public class OrderController {
             @RequestBody @Valid OrderRequest orderRequest
     ) {
         return ResponseEntity.ok(orderService.createOrder(orderRequest));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> findAll() {
+        return ResponseEntity.ok(orderService.findAll());
+    }
+
+    @GetMapping("/{order-id}")
+    public ResponseEntity<OrderResponse> findById(
+            @PathVariable("order-id") Integer orderId
+    ) {
+        return ResponseEntity.ok(orderService.findById(orderId));
     }
 }
