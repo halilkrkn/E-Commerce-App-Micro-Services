@@ -1,5 +1,6 @@
 package org.halilkrkn.ecommerce.services.order;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.halilkrkn.ecommerce.core.exception.BusinessException;
 import org.halilkrkn.ecommerce.core.mapper.OrderMapper;
@@ -8,9 +9,15 @@ import org.halilkrkn.ecommerce.core.rest_template.ProductClient;
 import org.halilkrkn.ecommerce.dto.request.order.OrderRequest;
 import org.halilkrkn.ecommerce.dto.request.order_line.OrderLineRequest;
 import org.halilkrkn.ecommerce.dto.request.product.PurchaseProductRequest;
+import org.halilkrkn.ecommerce.dto.response.order.OrderResponse;
+import org.halilkrkn.ecommerce.kafka.OrderConfirmation;
+import org.halilkrkn.ecommerce.kafka.OrderProducer;
 import org.halilkrkn.ecommerce.repositories.OrderRepository;
 import org.halilkrkn.ecommerce.services.order_line.OrderLineService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper mapper;
     private final OrderLineService orderLineService;
+    private final OrderProducer orderProducer;
 
 
     @Override
@@ -38,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID:: " + orderRequest.customerId()));
 
         // purchase the products --> product-ms (RestTemplate)
-        productClient.purchaseProducts(orderRequest.products());
+        var purchasedProducts = productClient.purchaseProducts(orderRequest.products());
 
         // persist the order
         var order = orderRepository.save(mapper.toOrderRequest(orderRequest));
@@ -57,6 +65,31 @@ public class OrderServiceImpl implements OrderService {
         // start payment process --> payment-ms
 
         // send the order confirmation email --> notification-ms (kafka)
-        return 0 ;
+        orderProducer.sendOrderConfirmation(
+                new OrderConfirmation(
+                        orderRequest.reference(),
+                        orderRequest.amount(),
+                        orderRequest.paymentMethod(),
+                        customer,
+                        purchasedProducts
+                )
+        );
+
+        return order.getId();
+    }
+
+    @Override
+    public List<OrderResponse> findAll() {
+        return orderRepository.findAll().stream()
+                .map(mapper::fromOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderResponse findById(Integer orderId) {
+        var orderResponse =  orderRepository.findById(orderId)
+                .map(mapper::fromOrderResponse)
+                .orElseThrow(() -> new EntityNotFoundException("No order exists with the provided ID:: " + orderId));
+        return orderResponse;
     }
 }
