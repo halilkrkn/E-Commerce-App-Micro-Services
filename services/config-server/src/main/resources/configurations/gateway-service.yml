@@ -1,0 +1,30 @@
+server:
+  port: 8222
+spring:
+  cloud:
+    gateway:
+      discovery: # Bu ksımda gateway servisimizin yönlendireceği servislerin bulunacağı servis kayıt sunucusunu tanımlıyoruz.
+        locator: # Bu kısımda servis kayıt sunucusunun adresini ve portunu tanımlıyoruz.
+          enabled: true # Bu kısımda servis kayıt sunucusunun etkin olup olmadığını belirtiyoruz.
+          lower-case-service-id: true # Bu kısımda servis kayıt sunucusuna kayıt olurken servis adlarının küçük harfe çevrilip çevrilmeyeceğini belirtiyoruz.
+      routes: # Bu kısımda gateway servisimizin yönlendireceği servislerin tanımlamalarını yapıyoruz.
+        - id: customer-service
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/orders/**
+        - id: order-lines-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/order-lines/**
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/v1/products/**
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE    # lb: Load Balancer
+          predicates:
+            - Path=/api/v1/payments/**

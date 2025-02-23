@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: notification
+  data:
+    mongodb:
+      username: halilkrkn
+      password: password
+      host: localhost
+      port: 27017
+      database: customer
+      authentication-database: admin
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: paymentGroup,orderGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*' # This is a security risk, do not use in production
+        spring.json.type.mapping: orderConfirmation:org.halilkrkn.ecommerce.kafka.OrderConfirmation,paymentConfirmation:org.halilkrkn.ecommerce.notification.PaymentNotificationConfirmation
+
+  mail:
+    host: localhost
+    port: 1025
+    username: 'halilkrkn'
+    password: 'password'
+    properties:
+      mail:
+        smtp:
+          trust: '*'
+        auth: true
+        starttls:
+          enabled: true
+        connection:
+          timeout: 5000
+          timeout-unit: MILLISECONDS
+        write-timeout: 5000
+
+server:
+    port: 8040
