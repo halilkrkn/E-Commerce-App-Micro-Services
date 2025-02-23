@@ -2,7 +2,7 @@ package org.halilkrkn.ecommerce.entity.notification;
 
 import lombok.*;
 import org.halilkrkn.ecommerce.kafka.order.OrderConfirmation;
-import org.halilkrkn.ecommerce.kafka.payment.PaymentConfirmation;
+import org.halilkrkn.ecommerce.kafka.payment.PaymentNotificationConfirmation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -22,6 +22,6 @@ public class Notification {
     private NotificationType type;
     private LocalDateTime notificationDate;
     private OrderConfirmation orderConfirmation;
-    private PaymentConfirmation paymentConfirmation;
+    private PaymentNotificationConfirmation paymentNotificationConfirmation;
 
 }
