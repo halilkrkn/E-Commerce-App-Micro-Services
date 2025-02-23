@@ -51,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
             javaMailSender.send(mimeMessage);
             log.info(String.format("INFO - Email sent successfully sent to %s with template %s,", destinationEmail));
         } catch (MessagingException e) {
-            log.error("WARNING - Cannot send email to {}", destinationEmail);
+            log.error(String.format("WARNING - Cannot send email to {}", destinationEmail));
             throw e;
         }
     }
@@ -80,7 +80,7 @@ public class EmailServiceImpl implements EmailService {
             javaMailSender.send(mimeMessage);
             log.info(String.format("INFO - Email sent successfully sent to %s with template %s,", destinationEmail));
         } catch (MessagingException e) {
-            log.error("WARNING - Cannot send email to {}", destinationEmail);
+            log.error(String.format("WARNING - Cannot send email to {}", destinationEmail));
             throw e;
         }
     }
