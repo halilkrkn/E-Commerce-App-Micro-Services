@@ -19,7 +19,9 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: '*' # This is a security risk, do not use in production
-        spring.json.type.mapping: orderConfirmation:org.halilkrkn.ecommerce.kafka.OrderConfirmation,paymentConfirmation:org.halilkrkn.ecommerce.notification.PaymentNotificationConfirmation
+        spring.json.type.mapping: >
+          orderConfirmation: org.halilkrkn.ecommerce.kafka.order.OrderConfirmation,
+          paymentConfirmation: org.halilkrkn.ecommerce.kafka.payment.PaymentNotificationConfirmation
 
   mail:
     host: localhost
